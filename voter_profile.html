@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Voter Profile - Snap Showdown</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f7fff6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .main-flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+
+    .profile-container {
+      flex: 1 1 350px;
+      max-width: 400px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    .profile-gallery {
+      flex: 1 1 600px;
+      max-width: 700px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+      color: #1F3B2C;
+    }
+
+    button {
+      background-color: #6D9674;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      width: 100%;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1F3B2C;
+    }
+
+    .photo-block {
+      background: #f1f8f5;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 30px;
+    }
+
+    .photo-block img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .comment-section {
+      margin-top: 15px;
+    }
+
+    .comments {
+      background: #e9f5e9;
+      padding: 8px;
+      border-radius: 6px;
+      max-height: 120px;
+      overflow-y: auto;
+      font-size: 0.9em;
+    }
+
+    .comments div {
+      margin-bottom: 6px;
+    }
+
+    .comment-section textarea {
+      width: 100%;
+      margin-top: 8px;
+      padding: 6px;
+      border-radius: 5px;
+      resize: vertical;
+      border: 1px solid #ccc;
+    }
+
+    .user-info {
+      background-color: #f1f8f5;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+
+    .profile-picture {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-picture img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 3px solid #a5d6a7;
+      object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+      .main-flex-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .profile-container, .profile-gallery {
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-flex-container">
+  <div class="profile-container">
+    <h2>Voter Profile</h2>
+    <div class="profile-picture">
+      <img src="https://via.placeholder.com/150" alt="Voter Picture" />
+    </div>
+    <div class="user-info">
+      <p><strong>Name:</strong> Voter User</p>
+      <p><strong>Email:</strong> voter@gmail.com</p>
+      <p><strong>Role:</strong> Voter</p>
+    </div>
+
+    <button onclick="loadPhotos()">View Photos to Vote</button>
+    <button onclick="goHome()">Home</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="profile-gallery">
+    <h3>Photos from Participants</h3>
+    <div id="photoGallery"></div>
+  </div>
+</div>
+
+<script>
+  const userInfo = { email: 'voter@gmail.com', role: 'voter' };
+  localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+  function loadPhotos() {
+    const allPhotos = JSON.parse(localStorage.getItem('photoSubmissions') || '[]');
+    const votes = JSON.parse(localStorage.getItem('voteCounts') || '{}');
+    const comments = JSON.parse(localStorage.getItem('comments') || '{}');
+    const voted = JSON.parse(localStorage.getItem('photoVotes') || '[]');
+
+    const gallery = document.getElementById('photoGallery');
+    gallery.innerHTML = '';
+
+    const approvedPhotos = allPhotos.filter(p => p.status === 'approved' && p.participant !== userInfo.email);
+
+    approvedPhotos.forEach(photo => {
+      const id = `${photo.participant}::${photo.title}`;
+      const hasVoted = voted.some(v => v.user === userInfo.email && v.photoId === id);
+      const photoComments = comments[id] || [];
+      const voteCount = votes[id] || 0;
+
+      const div = document.createElement('div');
+      div.className = 'photo-block';
+      div.innerHTML = `
+        <h4>${photo.title}</h4>
+        <p>${photo.description}</p>
+        <img src="${photo.file}" alt="${photo.title}" />
+        <p><strong>Votes:</strong> ${voteCount}</p>
+        ${!hasVoted ? `<button onclick="vote('${id}')">Vote</button>` : '<p><em>You already voted.</em></p>'}
+        <div class="comment-section">
+          <strong>Comments:</strong>
+          <div class="comments">
+            ${photoComments.length
+              ? photoComments.map(c => `<div><strong>${c.user}:</strong> ${c.text}</div>`).join('')
+              : '<em>No comments yet.</em>'}
+          </div>
+          <textarea id="comment-${id}" placeholder="Write a comment..."></textarea>
+          <button onclick="submitComment('${id}')">Submit Comment</button>
+        </div>
+      `;
+      gallery.appendChild(div);
+    });
+  }
+
+  function vote(photoId) {
+    const votes = JSON.parse(localStorage.getItem('voteCounts') || '{}');
+    const voted = JSON.parse(localStorage.getItem('photoVotes') || '[]');
+
+    if (voted.some(v => v.user === userInfo.email && v.photoId === photoId)) {
+      alert("You already voted.");
+      return;
+    }
+
+    votes[photoId] = (votes[photoId] || 0) + 1;
+    voted.push({ user: userInfo.email, photoId });
+
+    localStorage.setItem('voteCounts', JSON.stringify(votes));
+    localStorage.setItem('photoVotes', JSON.stringify(voted));
+
+    loadPhotos();
+  }
+
+  function submitComment(photoId) {
+    const text = document.getElementById(`comment-${photoId}`).value.trim();
+    if (!text) return;
+
+    const comments = JSON.parse(localStorage.getItem('comments') || '{}');
+    if (!comments[photoId]) comments[photoId] = [];
+
+    comments[photoId].push({ user: userInfo.email, text });
+    localStorage.setItem('comments', JSON.stringify(comments));
+    loadPhotos();
+  }
+
+  function goHome() {
+    window.location.href = 'home.html';
+  }
+
+  function logout() {
+    localStorage.removeItem('userInfo');
+    window.location.href = 'login.html';
+  }
+</script>
+
+</body>
+</html>

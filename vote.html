@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vote - Snap Showdown</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f7fff6;
+    }
+
+    h2 {
+      text-align: center;
+      color: #1F3B2C;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .photo-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      max-width: 300px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .photo-card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .photo-card h4 {
+      margin: 10px 0 5px;
+    }
+
+    button {
+      background-color: #6D9674;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 0.95em;
+    }
+
+    button[disabled] {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .home-button {
+      display: inline-block;
+      background: #6D9674;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 1em;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .home-button:hover {
+      background: #1F3B2C;
+      transform: scale(1.05);
+    }
+
+    .comment-section {
+      text-align: left;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+
+    .comment-section textarea {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 0.9em;
+    }
+
+    .comments {
+      margin-top: 10px;
+      padding: 8px;
+      background: #f0f4f0;
+      border-radius: 6px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .comment {
+      margin-bottom: 5px;
+    }
+
+    .no-photos {
+      text-align: center;
+      font-size: 1.1em;
+      margin-top: 40px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Vote for Your Favorite Photo</h2>
+  <div class="gallery" id="gallery"></div>
+
+  <div class="back-link">
+    <a href="home.html" class="home-button">🏠 Back to Home</a>
+  </div>
+
+  <script>
+    function getOrCreateUserId() {
+      let id = localStorage.getItem('userId');
+      if (!id) {
+        id = 'user-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8);
+        localStorage.setItem('userId', id);
+      }
+      return id;
+    }
+
+    function renderPhotos() {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo) {
+        alert("You must be logged in to vote and comment.");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const userId = getOrCreateUserId();
+      const submissions = JSON.parse(localStorage.getItem('photoSubmissions')) || [];
+      const voteCounts = JSON.parse(localStorage.getItem('voteCounts')) || {};
+      const votes = JSON.parse(localStorage.getItem('photoVotes')) || [];
+      const comments = JSON.parse(localStorage.getItem('comments')) || {};
+
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+
+      const approvedPhotos = submissions.filter(photo => photo.status === 'approved');
+      if (approvedPhotos.length === 0) {
+        gallery.innerHTML = '<p class="no-photos">No approved photos available for voting.</p>';
+        return;
+      }
+
+      approvedPhotos.forEach(photo => {
+        const photoId = `${photo.participant}::${photo.title}`;
+        const hasVoted = votes.some(v => v.photoId === photoId && v.userId === userId);
+        const count = voteCounts[photoId] || 0;
+        const photoComments = comments[photoId] || [];
+
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+        card.innerHTML = `
+          <img src="${photo.file}" alt="${photo.title}">
+          <h4>${photo.title}</h4>
+          <p>${photo.description}</p>
+          <p><strong>Votes:</strong> ${count}</p>
+          <button onclick="vote('${photoId}')" ${hasVoted ? 'disabled' : ''}>
+            ${hasVoted ? 'Voted' : 'Vote'}
+          </button>
+          <div class="comment-section">
+            <strong>Comments:</strong>
+            <div class="comments" id="comments-${photoId}">
+              ${photoComments.map(c => `<div class="comment"><strong>${c.user}:</strong> ${c.text}</div>`).join('')}
+            </div>
+            <textarea placeholder="Write a comment..." id="comment-${photoId}"></textarea>
+            <button onclick="submitComment('${photoId}')">Submit Comment</button>
+          </div>
+        `;
+        gallery.appendChild(card);
+      });
+    }
+
+    function vote(photoId) {
+      const userId = getOrCreateUserId();
+      const votes = JSON.parse(localStorage.getItem('photoVotes')) || [];
+      const voteCounts = JSON.parse(localStorage.getItem('voteCounts')) || {};
+
+      if (votes.some(v => v.photoId === photoId && v.userId === userId)) {
+        alert('You have already voted for this photo.');
+        return;
+      }
+
+      votes.push({ photoId, userId, timestamp: new Date().toISOString() });
+      voteCounts[photoId] = (voteCounts[photoId] || 0) + 1;
+
+      localStorage.setItem('photoVotes', JSON.stringify(votes));
+      localStorage.setItem('voteCounts', JSON.stringify(voteCounts));
+
+      alert('Your vote has been counted!');
+      renderPhotos();
+    }
+
+    function submitComment(photoId) {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo) {
+        alert("You must be logged in to comment.");
+        return;
+      }
+
+      const textarea = document.getElementById(`comment-${photoId}`);
+      const commentText = textarea.value.trim();
+      if (!commentText) return;
+
+      const comments = JSON.parse(localStorage.getItem('comments')) || {};
+      if (!comments[photoId]) comments[photoId] = [];
+
+      comments[photoId].push({ user: userInfo.email || "Anonymous", text: commentText });
+
+      localStorage.setItem('comments', JSON.stringify(comments));
+      textarea.value = '';
+      renderPhotos();
+    }
+
+    window.onload = renderPhotos;
+  </script>
+
+</body>
+</html>

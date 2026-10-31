@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Snap Showdown</title>
+    <style>
+        /* Reset default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Ensure the body and html take up the full viewport height */
+        html, body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container for the entire page */
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Side image section */
+        .image-side {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-side img {
+            max-width: 100%; /* Make the image responsive */
+            height: auto; /* Maintain aspect ratio */
+            object-fit: cover; /* Cover the container */
+        }
+
+        /* Form section */
+        .form-side {
+            flex: 1;
+            background-color: #F1E8E2;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="email"]:focus, input[type="password"]:focus {
+            border-color: #6D9674;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #6D9674;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1F3B2C;
+        }
+
+        .toggle-text {
+            margin-top: 15px;
+            color: #6D9674;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .toggle-text:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .image-side img {
+                height: 200px; /* Adjust for smaller screens */
+            }
+
+            .form-side {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-side">
+            <img src="bgg.jpeg" alt="Descriptive Alt Text"> <!-- Update this URL -->
+        </div>
+        <div class="form-side">
+            <h2 id="formTitle">Login</h2>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button id="actionButton" onclick="handleAction()">Login</button>
+            <p id="message"></p>
+            <p class="toggle-text" onclick="toggleForm()">Don't have an account? Register here.</p>
+        </div>
+    </div>
+
+    <script>
+        const users = {
+            'participant@gmail.com': { password: 'participant1', role: 'participant' },
+            'voter@gmail.com': { password: 'voter1', role: 'voter' },
+            'admin@gmail.com': { password: 'admin1', role: 'admin' }
+        };
+
+        function handleAction() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const message = document.getElementById('message');
+
+    if (document.getElementById('formTitle').innerText === 'Login') {
+        if (users[email] && users[email].password === password) {
+            message.innerText = 'Login successful!';
+            localStorage.setItem('userInfo', JSON.stringify({ email: email, role: users[email].role }));
+
+            if (users[email].role === 'admin') {
+                window.location.href = 'admin.html';
+            } else if (users[email].role === 'voter') {
+                window.location.href = 'voter_profile.html';
+            } else {
+                window.location.href = 'profile.html';
+            }
+        } else {
+            message.innerText = 'Invalid email or password!';
+        }
+    } else {
+        // Registration logic can be added here
+    }
+}
+
+        function toggleForm() {
+            const formTitle = document.getElementById('formTitle');
+            const actionButton = document.getElementById('actionButton');
+            const toggleText = document.querySelector('.toggle-text');
+
+            if (formTitle.innerText === 'Login') {
+                formTitle.innerText = 'Register';
+                actionButton.innerText = 'Register';
+                toggleText.innerText = 'Already have an account? Login here.';
+            } else {
+                formTitle.innerText = 'Login';
+                actionButton.innerText = 'Login';
+                toggleText.innerText = "Don't have an account? Register here.";
+            }
+            document.getElementById('message').innerText = '';
+        }
+    </script>
+</body>
+</html>

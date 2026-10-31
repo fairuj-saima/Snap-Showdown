@@ -1,0 +1,10 @@
+The finalized color scheme includes:
+
+1. **Dark Green**: `#1F3B2C` (used for the top navigation bar, footer, and text)
+2. **Medium Green**: `#6D9674` (used for hover effects and buttons)
+3. **Light Greenish**: `#F7FFF6` (used for the background and containers)
+4. **Light Color for Text**: `#F1E8E2` (used for text in dark areas)
+5. **Darker Beige**: `#967F73` (used for headings in the about section)
+6. **Dark Text**: `#333` (used for general text)
+
+This scheme creates a harmonious and nature-inspired aesthetic, suitable for a photography competition.

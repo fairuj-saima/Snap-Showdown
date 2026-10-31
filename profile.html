@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Profile - Snap Showdown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f7fff6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .main-flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+
+    .profile-container {
+      flex: 1 1 350px;
+      max-width: 400px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    .profile-gallery {
+      flex: 1 1 600px;
+      max-width: 700px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    h2, h3 {
+      color: #1F3B2C;
+    }
+
+    button {
+      background-color: #6D9674;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      width: 100%;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1F3B2C;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .profile-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .user-info {
+      background-color: #f1f8f5;
+      padding: 15px;
+      border-radius: 10px;
+      flex: 1;
+    }
+
+    .profile-picture {
+      text-align: center;
+      min-width: 130px;
+      flex-shrink: 0;
+    }
+
+    .profile-picture img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 3px solid #a5d6a7;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .notification-box {
+      background: #e9f5e9;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      display: none;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .photo-block {
+      background: #f1f8f5;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 30px;
+    }
+
+    .photo-block img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .share-buttons {
+      margin-top: 10px;
+    }
+
+    .share-buttons a {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 8px 12px;
+      background-color: #eeeeee;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #1F3B2C;
+      font-size: 0.9em;
+      transition: background 0.3s;
+    }
+
+    .share-buttons a:hover {
+      background-color: #d6eadd;
+    }
+
+    .share-buttons img {
+      vertical-align: middle;
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .comment-section {
+      margin-top: 15px;
+    }
+
+    .comments {
+      background: #e9f5e9;
+      padding: 8px;
+      border-radius: 6px;
+      max-height: 120px;
+      overflow-y: auto;
+      font-size: 0.9em;
+    }
+
+    .comments div {
+      margin-bottom: 6px;
+    }
+
+    .comment-section textarea {
+      margin-top: 8px;
+      padding: 6px;
+      border-radius: 5px;
+      resize: vertical;
+    }
+
+    @media (max-width: 768px) {
+      .main-flex-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .profile-container, .profile-gallery {
+        max-width: 90%;
+      }
+
+      .profile-row {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-flex-container">
+  <div class="profile-container">
+    <h2>Your Profile</h2>
+    <div class="profile-row">
+      <div class="profile-picture">
+        <img src="profile_pic.jpg" alt="Profile Picture" />
+      </div>
+      <div class="user-info">
+        <p><strong>Name:</strong> Fairuj Saima</p>
+        <p><strong>Email:</strong> participant@gmail.com</p>
+        <p><strong>Phone:</strong> 01698853247</p>
+        <p><strong>Role:</strong> Photographer</p>
+        <p><strong>Joined:</strong> Jan 12, 2024</p>
+      </div>
+    </div>
+
+    <button onclick="moveUploadSection()">Submit Photo</button>
+    <button onclick="viewSubmittedPhotos()">View Your Submitted Photos</button>
+    <button onclick="toggleNotifications()">🔔 Notifications</button>
+
+    <div id="notificationBox" class="notification-box"></div>
+
+    <div class="upload-form" id="uploadForm" style="display:none;">
+      <h3>Upload Photograph</h3>
+      <input type="text" id="photoTitle" placeholder="Enter photo title" />
+      <textarea id="photoDescription" placeholder="Enter photo description"></textarea>
+      <input type="file" id="photoUpload" accept="image/*" onchange="previewPhoto()" />
+      <img id="photoPreview" class="photo-preview" style="max-width:100%; border-radius:8px; display:none;" />
+      <button onclick="uploadPhoto()">Upload Photo</button>
+    </div>
+
+    <button onclick="goHome()">Home</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="profile-gallery" id="rightPane">
+    <h3>Approved Photos</h3>
+    <div id="approvedPhotos"></div>
+  </div>
+</div>
+
+<script>
+  let userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
+  if (!userInfo || !userInfo.email) {
+    userInfo = { email: 'participant@gmail.com', role: 'participant' };
+    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+  }
+
+  function uploadPhoto() {
+    const title = document.getElementById('photoTitle').value;
+    const description = document.getElementById('photoDescription').value;
+    const file = document.getElementById('photoUpload').files[0];
+    if (title && description && file) {
+      const reader = new FileReader();
+      reader.onloadend = function () {
+        const submission = {
+          title,
+          description,
+          file: reader.result,
+          status: 'pending',
+          participant: userInfo.email
+        };
+        let photoSubmissions = JSON.parse(localStorage.getItem('photoSubmissions')) || [];
+        photoSubmissions.push(submission);
+        localStorage.setItem('photoSubmissions', JSON.stringify(photoSubmissions));
+        alert('Photo submitted for approval!');
+        document.getElementById('photoTitle').value = '';
+        document.getElementById('photoDescription').value = '';
+        document.getElementById('photoUpload').value = '';
+        document.getElementById('photoPreview').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please fill in all fields.');
+    }
+  }
+
+  function previewPhoto() {
+    const file = document.getElementById('photoUpload').files[0];
+    const preview = document.getElementById('photoPreview');
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    if (file) reader.readAsDataURL(file);
+  }
+
+  function viewSubmittedPhotos() {
+    const submissions = JSON.parse(localStorage.getItem('photoSubmissions')) || [];
+    const approvedPhotos = submissions.filter(s => s.participant === userInfo.email && s.status === 'approved');
+    const voteCounts = JSON.parse(localStorage.getItem('voteCounts')) || {};
+    const comments = JSON.parse(localStorage.getItem('comments')) || {};
+
+    const gallery = document.getElementById('approvedPhotos');
+    const rightPane = document.getElementById('rightPane');
+    gallery.innerHTML = '';
+
+    approvedPhotos.forEach(sub => {
+      const photoId = `${sub.participant}::${sub.title}`;
+      const votes = voteCounts[photoId] || 0;
+      const photoComments = comments[photoId] || [];
+
+      const div = document.createElement('div');
+      div.className = 'photo-block';
+      div.innerHTML = `
+        <h4>${sub.title}</h4>
+        <p>${sub.description}</p>
+        <img src="${sub.file}" alt="${sub.title}" />
+        <p><strong>Status:</strong> ${sub.status}</p>
+        <p><strong>Votes:</strong> ${votes}</p>
+        <div class="share-buttons">
+          <strong>Share:</strong><br>
+          <a href="https://www.facebook.com/" target="_blank">
+            <img src="facebook-logo.png" alt="Facebook Icon">Facebook
+          </a>
+          <a href="https://x.com/" target="_blank">
+            <img src="twitter-logo.png" alt="Twitter Icon">X
+          </a>
+          <a href="https://www.whatsapp.com/" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp Icon">WhatsApp
+          </a>
+        </div>
+        <div class="comment-section">
+          <strong>Comments:</strong>
+          <div class="comments">
+            ${photoComments.length ? photoComments.map(c => `<div><strong>${c.user}:</strong> ${c.text}</div>`).join('') : '<em>No comments yet.</em>'}
+          </div>
+          <textarea id="comment-${photoId}" placeholder="Add a comment..."></textarea>
+          <button onclick="submitComment('${photoId}')">Submit Comment</button>
+        </div>
+      `;
+      gallery.appendChild(div);
+    });
+
+    rightPane.style.display = 'block';
+    rightPane.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function submitComment(photoId) {
+    const freshUser = JSON.parse(localStorage.getItem('userInfo'));
+    if (!freshUser || !freshUser.email) {
+      alert("You must be logged in to comment.");
+      return;
+    }
+
+    const textarea = document.getElementById(`comment-${photoId}`);
+    const commentText = textarea.value.trim();
+    if (!commentText) {
+      alert("Comment cannot be empty.");
+      return;
+    }
+
+    const comments = JSON.parse(localStorage.getItem('comments')) || {};
+    if (!comments[photoId]) comments[photoId] = [];
+    comments[photoId].push({ user: freshUser.email, text: commentText });
+    localStorage.setItem('comments', JSON.stringify(comments));
+    textarea.value = '';
+    viewSubmittedPhotos();
+  }
+
+  function toggleNotifications() {
+    const box = document.getElementById('notificationBox');
+    const allNotifications = JSON.parse(localStorage.getItem('userNotifications')) || {};
+    const notifications = allNotifications[userInfo.email] || [];
+    box.innerHTML = notifications.length
+      ? notifications.map(n => `<p><strong>${n.time}:</strong> ${n.message}</p>`).join('<hr>')
+      : '<p>No new notifications.</p>';
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function logout() {
+    localStorage.removeItem('userInfo');
+    alert('Logged out successfully!');
+    window.location.href = 'login.html';
+  }
+
+  function goHome() {
+    window.location.href = 'home.html';
+  }
+
+  function moveUploadSection() {
+    document.getElementById('uploadForm').style.display = 'block';
+    document.getElementById('uploadForm').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function loadProfilePicture() {
+    const storedImg = localStorage.getItem('profilePicture');
+    if (storedImg) document.getElementById('profileImage').src = storedImg;
+  }
+
+  window.onload = function () {
+    loadProfilePicture();
+  };
+</script>
+
+</body>
+</html>

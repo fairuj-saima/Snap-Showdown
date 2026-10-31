@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snap Showdown</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F7FFF6; /* Light greenish background */
+        }
+
+        /* Top Navigation Bar Styles */
+        .top-navbar {
+            background-color: #1F3B2C; /* Dark green */
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .top-navbar a {
+            color: #F1E8E2; /* Light color for text */
+            text-align: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+
+        .top-navbar a:hover {
+            color: #6D9674; /* Medium green hover color */
+        }
+
+        /* Main Navigation Bar Styles */
+        .navbar {
+            background-color: #F7FFF6; /* Light greenish */
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            color: #1F3B2C; /* Dark green for text */
+            text-align: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 1em;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: #6D9674; /* Medium green hover color */
+            color: #F1E8E2; /* Light text color */
+        }
+
+        header {
+            background-image: url('banner.jpg'); /* Add your banner image here */
+            background-size: cover;
+            background-position: center;
+            color: #F1E8E2; /* Light text color */
+            text-align: center;
+            padding: 80px 20px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 5px solid #1F3B2C; /* Dark green border */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 5em; /* Increased font size for emphasis */
+            font-weight: bold; /* Make it bold */
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* Enhanced shadow for depth */
+            letter-spacing: 2px; /* Increased letter spacing */
+        }
+
+        p {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        .deadline {
+            font-size: 1.2em;
+            color: #FF0000; /* Red for emphasis */
+            margin-top: 10px;
+        }
+
+        .container {
+            max-width: 1200px; /* Limit container width */
+            margin: auto;
+            padding: 20px;
+            background: #F7FFF6; /* Light greenish */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #6D9674; /* Medium green button */
+            color: #F1E8E2; /* Light text color */
+            padding: 20px 40px; /* Increased padding for a bigger button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.5em; /* Increased font size */
+            transition: background-color 0.3s, transform 0.3s;
+            margin: 20px 0; /* Margin for spacing */
+        }
+
+        button:hover {
+            background-color: #1F3B2C; /* Dark green hover color */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Four images per row */
+            gap: 15px;
+        }
+
+        .gallery img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        .about-section {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background-color: #6D9674; /* Medium green */
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center; /* Center the section */
+        }
+
+        .about-article {
+            width: 30%;
+            padding: 20px;
+            border-right: 2px solid #FFFACC; /* Soft yellow border */
+            background: #F1E8E2; /* Light background */
+            border-radius: 10px;
+            transition: box-shadow 0.3s;
+            margin: 0 10px; /* Margin for spacing between articles */
+        }
+
+        .about-article:last-child {
+            border-right: none;
+        }
+
+        .about-article:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-article h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #967F73; /* Darker beige */
+        }
+
+        .about-article p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #1F3B2C; /* Dark green text */
+        }
+
+        .winners-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .winners-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #1F3B2C; /* Dark green */
+        }
+
+        .winners {
+            display: flex;
+            flex-direction: column; /* Stack winners vertically */
+            align-items: center; /* Center align items */
+            gap: 20px; /* Space between winners */
+        }
+
+        .winner {
+            display: flex; /* Use flex to align image and text side by side */
+            align-items: center; /* Center align vertically */
+            width: 80%; /* Adjust width for better stacking */
+            margin: 10px 0;
+            background: #F1E8E2; /* Light background */
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left; /* Align text to the left */
+        }
+
+        .winner img {
+            width: 150px; /* Adjusted image size */
+            height: 150px; /* Adjusted image size */
+            border-radius: 10px;
+            margin-right: 15px; /* Space between image and text */
+        }
+
+        .winner h3 {
+            font-size: 1.5em;
+            margin: 0 0 10px 0; /* Adjust margin */
+            color: #1F3B2C; /* Dark green */
+        }
+
+        .winner p {
+            font-size: 1em;
+            color: #333; /* Dark text */
+        }
+
+        .participation-section {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background-color: #F1E8E2; /* Light background for the section */
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .participation-section h2 {
+            font-size: 1.8em;
+            color: #1F3B2C; /* Dark green */
+        }
+
+        .participation-section p {
+            font-size: 1.1em;
+            color: #333; /* Dark text */
+        }
+
+        .prizes-section {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background-color: #6D9674; /* Medium green */
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .prizes-section h2 {
+            font-size: 1.8em;
+            color: #F1E8E2; /* Light text color */
+        }
+
+        .prizes-list {
+            list-style-type: none; /* Remove bullet points */
+            padding: 0;
+            color: #F1E8E2; /* Light text color */
+        }
+
+        .prizes-list li {
+            margin: 10px 0; /* Space between items */
+            font-size: 1.2em;
+        }
+
+        .contact-section {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background-color: #F1E8E2; /* Light background */
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-section h2 {
+            font-size: 1.8em;
+            color: #1F3B2C; /* Dark green */
+        }
+
+        .contact-section p {
+            font-size: 1.1em;
+            color: #333; /* Dark text */
+        }
+
+        .social-media {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .social-media img {
+            width: 40px; /* Placeholder size for social media logos */
+            height: 40px;
+            margin: 0 10px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .about-article {
+                width: 100%; /* Full width on smaller screens */
+                margin-bottom: 20px; /* Space between articles */
+            }
+
+            .gallery {
+                grid-template-columns: repeat(2, 1fr); /* Two images per row on smaller screens */
+            }
+
+            .winner {
+                flex-direction: column; /* Stack image and text on smaller screens */
+                align-items: center; /* Center align items */
+            }
+
+            .winner img {
+                margin-bottom: 10px; /* Space below image */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-navbar">
+    <a href="#about">About</a>
+    <a href="#help">Help</a>
+    <a href="#contact">Contact Us</a>
+</div>
+
+<div class="navbar">
+    <a href="more_about_competition.html">More About Competition</a> <!-- Updated link -->
+    <a href="leaderboard.html">Top Photographs</a>
+    <a href="more_about_competition.html">Prizes You Can Win</a>
+    <a href="previous_winners.html">Previous Winners</a>
+    <a href="more_about_competition.html">How to Participate</a>
+    <a id="authButton" href="#">Login</a> <!-- This will change based on login status -->
+</div>
+
+<header>
+    <h1>Snap Showdown</h1>
+    <p>Capture the Moment, Claim the Crown!</p>
+    <p class="deadline">Deadline: 24.05.2025</p>
+    <button onclick="location.href='login.html'" style="background-color: #6D9674; color: #F1E8E2; padding: 20px 40px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.6em; margin-top: 20px; transition: background-color 0.3s, transform 0.3s;">Submit Your Photograph</button>
+</header>
+
+<div class="container">
+    <div class="buttons">
+        <button onclick="location.href='view_submitted_photos.html'">View Submitted Photos</button>
+        <button onclick="location.href='vote.html'">Vote for Your Favorite Photos</button>
+    </div>
+
+    <div class="gallery">
+        <img src="Photo1.jpg" alt="Photo 1">
+        <img src="Photo2.jpg" alt="Photo 2">
+        <img src="Photo3.jpg" alt="Photo 3">
+        <img src="Photo4.jpg" alt="Photo 4">
+        <img src="Photo5.jpg" alt="Photo 5">
+        <img src="Photo6.jpg" alt="Photo 6">
+        <img src="Photo7.jpg" alt="Photo 7">
+        <img src="Photo8.jpg" alt="Photo 8">
+    </div>
+
+    <div class="winners-section">
+        <h2>Meet Our Previous Winners</h2>
+        <div class="winners">
+            <div class="winner">
+                <img src="winner1.jpg" alt="Nafis Mahamud Nabil"> <!-- Replace with winner's photo -->
+                <div>
+                    <h3>Nafis Mahamud Nabil</h3>
+                    <p>"Winning this competition was a dream come true! It inspired me to pursue photography full-time. My journey began with capturing the beauty of everyday moments, and this award encouraged me to explore new creative avenues. Photography is not just a hobby for me; it's a way to tell stories and connect with people."</p>
+                </div>
+            </div>
+            <div class="winner">
+                <img src="winner2.jpg" alt="Sharafat Labib"> <!-- Replace with winner's photo -->
+                <div>
+                    <h3>Sharafat Labib</h3>
+                    <p>"This competition pushed my creative boundaries and helped me connect with fellow photographers. I’ve learned that photography is about capturing emotions and experiences. Winning has motivated me to develop my skills further and pursue more challenging projects. I aim to inspire others through my work."</p>
+                </div>
+            </div>
+            <div class="winner">
+                <img src="winner3.jpg" alt="IH Safy"> <!-- Replace with winner's photo -->
+                <div>
+                    <h3>IH Safy</h3>
+                    <p>"I never expected to win! It motivated me to keep capturing the beauty around me. Photography has taught me to see the world from different perspectives, and this experience has opened doors to new opportunities. I hope to share my vision and encourage others to appreciate the art of photography."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="participation-section">
+        <h2>How to Participate</h2>
+        <p>Ready to showcase your photography skills? Participating in Snap Showdown is easy! Simply follow the guidelines, submit your best work, and join a community of passionate photographers. Whether you are a novice or a pro, we welcome your creativity!</p>
+        <button onclick="location.href='#participate'">Know More</button>
+    </div>
+    
+    <div class="submitted-photos-section">
+	<h2>Submitted Photos</h2>
+	<div id="submittedPhotosList"></div>
+    </div> 
+    
+    <div class="prizes-section">
+        <h2>Prizes You Can Win</h2>
+        <ul class="prizes-list">
+            <li>First Place: $1000 Cash Prize</li>
+            <li>Second Place: Professional Camera Gear</li>
+            <li>Third Place: Photography Workshop Voucher</li>
+            <li>Honorable Mentions: Gift Cards and Certificates</li>
+        </ul>
+        <button onclick="location.href='#prizes'">Know More</button>
+    </div>
+
+    <div class="contact-section">
+        <h2>Contact Us</h2>
+        <p>Email: info@photocompetition.com</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Follow us on social media for updates!</p>
+        <div class="social-media">
+            <img src="facebook-logo.png" alt="Facebook Logo"> <!-- Replace with actual logo -->
+            <img src="twitter-logo.png" alt="Twitter Logo"> <!-- Replace with actual logo -->
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2025 Snap Showdown</p>
+</footer>
+
+<script>
+ function checkLoginStatus() {
+    const userInfo = localStorage.getItem('userInfo');
+    const authButton = document.getElementById('authButton');
+
+    if (userInfo) {
+        const user = JSON.parse(userInfo);
+        if (user.role === 'admin') {
+            authButton.innerText = 'Admin Profile';
+            authButton.onclick = () => location.href = 'admin.html';
+        } else if (user.role === 'voter') {
+            authButton.innerText = 'Voter Profile';
+            authButton.onclick = () => location.href = 'voter_profile.html';
+        } else {
+            authButton.innerText = 'Profile';
+            authButton.onclick = () => location.href = 'profile.html';
+        }
+    } else {
+        authButton.innerText = 'Login';
+        authButton.onclick = () => location.href = 'login.html';
+    }
+}
+
+
+ function handleVoteButton() {
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
+        const user = JSON.parse(userInfo);
+        if (user.role === 'voter') {
+            location.href = 'voter_profile.html';
+        } else {
+            alert('Only voters can vote.');
+        }
+    } else {
+        alert('Please log in to vote!');
+        location.href = 'login.html';
+    }
+}
+
+    window.onload = checkLoginStatus; // Check login status when the page loads
+</script>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leaderboard - Snap Showdown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #F7FFF6;
+    }
+
+    header {
+      background-color: #6D9674;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      margin-bottom: 10px;
+      background: #f1f8f5;
+      border-radius: 8px;
+      border-left: 6px solid #6D9674;
+    }
+
+    .leaderboard-item img {
+      height: 60px;
+      width: 90px;
+      border-radius: 6px;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+
+    .leaderboard-rank {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #2e7d32;
+      margin-right: 15px;
+    }
+
+    .leaderboard-info {
+      flex-grow: 1;
+    }
+
+    .leaderboard-info h3 {
+      margin: 0;
+      font-size: 1.1em;
+      color: #1F3B2C;
+    }
+
+    .leaderboard-info p {
+      margin: 3px 0;
+      font-size: 0.95em;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .home-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #6D9674;
+      color: #fff;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .home-link:hover {
+      background: #1F3B2C;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📸 Leaderboard - Top Voted Photos</h1>
+</header>
+
+<div class="container" id="leaderboardContainer">
+  <!-- Photos will be injected here -->
+</div>
+
+<footer>
+  <a href="home.html" class="home-link">← Back to Home</a>
+</footer>
+
+<script>
+  function renderLeaderboard() {
+    const submissions = JSON.parse(localStorage.getItem('photoSubmissions')) || [];
+    const voteCounts = JSON.parse(localStorage.getItem('voteCounts')) || {};
+
+    const approvedPhotos = submissions.filter(photo => photo.status === 'approved');
+
+    const rankedPhotos = approvedPhotos.map(photo => {
+      const id = `${photo.participant}::${photo.title}`;
+      return {
+        ...photo,
+        id,
+        votes: voteCounts[id] || 0
+      };
+    }).sort((a, b) => b.votes - a.votes);
+
+    const container = document.getElementById('leaderboardContainer');
+    container.innerHTML = '';
+
+    if (rankedPhotos.length === 0) {
+      container.innerHTML = '<p style="text-align:center;">No approved photos yet.</p>';
+      return;
+    }
+
+    rankedPhotos.forEach((photo, index) => {
+      const item = document.createElement('div');
+      item.className = 'leaderboard-item';
+
+      item.innerHTML = `
+        <div class="leaderboard-rank">#${index + 1}</div>
+        <img src="${photo.file}" alt="${photo.title}">
+        <div class="leaderboard-info">
+          <h3>${photo.title}</h3>
+          <p><strong>By:</strong> ${photo.participant}</p>
+          <p><strong>Votes:</strong> ${photo.votes}</p>
+        </div>
+      `;
+
+      container.appendChild(item);
+    });
+  }
+
+  window.onload = renderLeaderboard;
+</script>
+
+</body>
+</html>
